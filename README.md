@@ -1,2 +1,12 @@
-# supercritical-galton-watson
-Matlab code for computing the density function of the limit distribution W of a supercritical Galton-Watson process associated to a polynomial probability generating function of the offspring distribution 
+# Supercritical Galton-Watson processes
+Let P(z) be a polynomial describing the probability generating function of the offspring distribution of a supercritical Galton-Watson process. The code contained in this repository allows the computation of the density function of the limit distribution W, written as a (truncated) series of generalized Laguerre polynomials multiplied with an exponential function, plus a delta function in 0 corresponding to the probability of extinction.
+
+## Reproducing the experiments from the paper
+TODO: add reference when paper is on arXiv
+The script "run_all_tests.m" reproduces all the numerical experiments in the paper.
+
+## Computing the limit distribution for a new offspring distribution
+The Matlab script "demo.m" shows how to use the function "compute_density_W.m" and how to interpret its outputs.
+
+## References
+TODO
