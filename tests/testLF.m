@@ -1,8 +1,9 @@
 addpath ../
 clear
 close all
-rng(3);
-figure('Position', [0, 0, 1100, 400])
+rng(1);
+% figure('Position', [0, 0, 1100, 400])
+figure('Position', [0, 0, 600, 400])
 
 % number of moments of the MGF that we compute
 k = 80; 
@@ -10,15 +11,7 @@ k = 80;
 dim = 40; 
 
 %% Linear fractional case
-for c = [0.5, 0.7, 0.9]
-    if c == 0.5
-        color = 'm';
-    elseif c == 0.7
-        color = 'c';
-    else
-        color = 'k';
-    end
-
+for c = [0.7, 0.9]
     m = 1/(1-c);
     b = m * (1 - c)^2;
     p = [0; (b*c.^[0:k-2])'];
@@ -29,10 +22,13 @@ for c = [0.5, 0.7, 0.9]
     true_sol = @(x) (1-q)^2*exp(-(1-q)*x);
     
     % Coefficients of phi(z)
-    phi = newton_iter([1; -1], p, k, 100);
-    if length(phi) < k
-        phi = [phi; zeros(k-length(phi), 1)];
+    phi_newton = newton_iter([1; -1], p, k, 100);
+    if length(phi_newton) < k
+        phi_newton = [phi_newton; zeros(k-length(phi_newton), 1)];
     end
+    
+    % Alternative: using fixed-point iteration
+    % phi = simple_fixedpoint([1; -1], p, k, 1000);
     
     % Simulation and choice of beta
     T = 10000; % Number of simulations
@@ -58,31 +54,60 @@ for c = [0.5, 0.7, 0.9]
     fprintf('Chosen beta: %1.2e\n', beta);
     close(fig)
     
-    % Computation of the approximate density
-    coeff = get_density_from_phi_a(phi, dim, alpha, beta, q);
+    % Computation of the approximate density from Newton
+    coeff_newton = get_density_from_phi_a(phi_newton, dim, alpha, beta, q);
     s = 1000;
-    x = linspace(0, max(empirical_distr_W)*1.2, s);
-    rho = evaluate_generalized_laguerre_fast(x, coeff, alpha, beta);
+    x = linspace(0, 15, s);
+    rho_newton = evaluate_generalized_laguerre_fast(x, coeff_newton, alpha, beta);
+
+
+    % Computation of coefficients from forward
+    P = @(z) (1-c)*z / (eye(size(z))-c*z);
+    dP = @(z) (1-c)*eye(size(z)) / ((eye(size(z))-c*z)^2);
+    [phi_forward, ~] = recursive_solution_fft(P, k, dP);
+
+    % Computation of the approximate density from forward
+    coeff_forward = get_density_from_phi_a(phi_forward, dim, alpha, beta, q);
+    s = 1000;
+    x = linspace(0, 15, s);
+    rho_forward = evaluate_generalized_laguerre_fast(x, coeff_forward, alpha, beta);
     
     % Plot
-    subplot(1, 2, 1)
-    plot(1:k, phi, strcat(color,'o'),'LineWidth', 2)
-    hold on
+    % subplot(1, 2, 1)
+    if c == 0.7
+        plot(1:k, phi_newton, 'sk','LineWidth', 1)
+        hold on
+        plot(1:k, phi_forward, 'om','LineWidth', 1)
+    else
+        plot(1:k, phi_newton, 'dc','LineWidth', 1)
+        hold on
+        plot(1:k, phi_forward, 'xb','LineWidth', 1)
+    end
     
-    subplot(1, 2, 2) 
-    tt = true_sol(x)';
-    err = abs(rho-tt);
-    semilogy(x, err, color, 'LineWidth', 2)
-    hold on
+    % subplot(1, 2, 2) 
+    % tt = true_sol(x)';
+    % err_newton = abs(rho_newton-tt);
+    % err_forward = abs(rho_forward-tt);
+    % if c == 0.7
+    %     semilogy(x, err_newton, 'm', 'LineWidth', 2)
+    % else
+    %     semilogy(x, err_newton, 'c', 'LineWidth', 2)
+    % end
+    % hold on
+    % if c == 0.7
+    %     semilogy(x, err_forward, '--k', 'Linewidth', 2)
+    % else
+    %     semilogy(x, err_forward, '--b', 'LineWidth', 2)
+    % end
 end
 
-subplot(1, 2, 1)
-legend('c=0.5', 'c=0.7', 'c=0.9')
+% subplot(1, 2, 1)
+legend('c=0.7 Newton', 'c=0.7 forward', 'c=0.9 Newton', 'c=0.9 forward')
 title('Coefficients of $\varphi$','Interpreter','latex');
 set(gca,'fontsize', 16) 
-subplot(1, 2, 2)
-legend('c=0.5', 'c=0.7', 'c=0.9')
-title('Error','Interpreter','latex')
+% subplot(1, 2, 2)
+% legend('c=0.7 Newton', 'c=0.7 forward', 'c=0.9 Newton', 'c=0.9 forward')
+% title('Error','Interpreter','latex')
 set(gca,'fontsize', 16) 
 print('-depsc', '-r600', 'testLF.eps')
 hold off

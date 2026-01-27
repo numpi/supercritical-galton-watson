@@ -15,7 +15,7 @@ testLF
 
 % Tests on the fixed-point and Newton's iterations
 test_fix_vs_newton1
-test_fix_vs_newton2
+test_fix_vs_newton_vs_formula
 
 % Condition numbers of square and rectangular Pascal matrices
 test_condition_numbers_pascal
