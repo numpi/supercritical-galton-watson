@@ -47,7 +47,7 @@ maxtime = 15; % Approximating W = W_maxtime
 empirical_distr_W = distr_W_from_simulation(p, T, maxtime);
 
 %%
-figure('Position', [0, 0, 500, 300])
+%figure('Position', [0, 0, 500, 300])
 h = histogram(empirical_distr_W, 'Normalization','pdf');
 h.FaceAlpha = 0.3;
 
@@ -73,6 +73,10 @@ plot(x, rho, 'r','LineWidth', 3)
 
 ylim([0, 1])
 xlim([0, 6])
+
+xlabel('$x$', 'Interpreter', 'latex')
+ylabel('density of $W$', 'Interpreter', 'latex')
+
 set(gca,'fontsize', 16) 
 print('-depsc', '-r600', 'test_black_robin.eps')
 hold off

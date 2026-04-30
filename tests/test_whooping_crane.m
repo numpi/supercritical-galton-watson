@@ -33,7 +33,8 @@ maxtime = 100; % Approximating W = W_maxtime
 empirical_distr_W = distr_W_from_simulation(p, T, maxtime);
 
 %%
-figure('Position', [0, 0, 500, 300])
+figure('Position', [0, 0, 1000, 300])
+subplot(1, 2, 1)
 h = histogram(empirical_distr_W, 'Normalization','pdf'); %,'NumBins',30);
 h.FaceAlpha = 0.3;
 
@@ -59,6 +60,13 @@ hold on
 plot(x, rho, 'r','LineWidth', 3)
 ylim([0, 0.1])
 xlim([0, 20])
+xlabel('$x$', 'Interpreter', 'latex')
+ylabel('density of $W$', 'Interpreter', 'latex')
 set(gca,'fontsize', 16) 
+
+subplot(1, 2, 2)
+test_black_robin;
+
+%print('-depsc', '-r600', 'test_birds_new.eps')
 print('-depsc', '-r600', 'test_whooping_crane.eps')
 hold off

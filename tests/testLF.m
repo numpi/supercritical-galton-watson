@@ -2,7 +2,6 @@ addpath ../
 clear
 close all
 rng(1);
-% figure('Position', [0, 0, 1100, 400])
 figure('Position', [0, 0, 600, 400])
 
 % number of moments of the MGF that we compute
@@ -73,7 +72,6 @@ for c = [0.7, 0.9]
     rho_forward = evaluate_generalized_laguerre_fast(x, coeff_forward, alpha, beta);
     
     % Plot
-    % subplot(1, 2, 1)
     if c == 0.7
         plot(1:k, phi_newton, 'sk','LineWidth', 1)
         hold on
@@ -83,31 +81,10 @@ for c = [0.7, 0.9]
         hold on
         plot(1:k, phi_forward, 'xb','LineWidth', 1)
     end
-    
-    % subplot(1, 2, 2) 
-    % tt = true_sol(x)';
-    % err_newton = abs(rho_newton-tt);
-    % err_forward = abs(rho_forward-tt);
-    % if c == 0.7
-    %     semilogy(x, err_newton, 'm', 'LineWidth', 2)
-    % else
-    %     semilogy(x, err_newton, 'c', 'LineWidth', 2)
-    % end
-    % hold on
-    % if c == 0.7
-    %     semilogy(x, err_forward, '--k', 'Linewidth', 2)
-    % else
-    %     semilogy(x, err_forward, '--b', 'LineWidth', 2)
-    % end
 end
 
-% subplot(1, 2, 1)
 legend('c=0.7 Newton', 'c=0.7 forward', 'c=0.9 Newton', 'c=0.9 forward')
 title('Coefficients of $\varphi$','Interpreter','latex');
-set(gca,'fontsize', 16) 
-% subplot(1, 2, 2)
-% legend('c=0.7 Newton', 'c=0.7 forward', 'c=0.9 Newton', 'c=0.9 forward')
-% title('Error','Interpreter','latex')
 set(gca,'fontsize', 16) 
 print('-depsc', '-r600', 'testLF.eps')
 hold off

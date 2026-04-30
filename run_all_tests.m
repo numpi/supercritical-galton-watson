@@ -12,6 +12,7 @@ test_black_robin
 
 % Linear-fractional example
 testLF
+test_LF_kolmogorov
 
 % Tests on the fixed-point and Newton's iterations
 test_fix_vs_newton1
